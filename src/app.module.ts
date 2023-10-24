@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { AppService2 } from './app.service2';
 import { ConfigModule } from './config/config.module';
+import { LoggerWare } from './config/Logger.ware';
 
 @Module({
   imports: [UserModule,ConfigModule.forRoot({
@@ -34,4 +35,11 @@ import { ConfigModule } from './config/config.module';
       }}
   ],
 })
-export class AppModule {}
+
+export class AppModule implements NestModule{
+  configure (consumer:MiddlewareConsumer) {
+    consumer.apply(LoggerWare).forRoutes('home')
+    //甚至可以直接吧 UserController 塞进去
+    //consumer.apply(LoggerWare).forRoutes(UserController) 
+  }
+}
