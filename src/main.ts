@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { VersioningType } from '@nestjs/common';
 import * as session from 'express-session';
+import { ConfigResponse } from './config/config.response';
+import { ConfigHttpFilter } from './config/config.filter';
 
 const whiteList = ['/list']
 
@@ -31,6 +33,8 @@ async function bootstrap() {
     }),
   );
   app.use(middleWareAll);
+  app.useGlobalInterceptors(new ConfigResponse())
+  app.useGlobalFilters(new ConfigHttpFilter())
   await app.listen(3000);
 }
 bootstrap();
