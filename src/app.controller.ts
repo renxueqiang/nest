@@ -9,22 +9,34 @@ import {
   Body,
   Param,
   Headers,
-  HttpCode
+  HttpCode,
+  Inject,
 } from '@nestjs/common';
 import { AppService } from './app.service';
+import { AppService2 } from './app.service2';
+import { UserService } from './user/user.service';
+import { ConfigModule } from './config/config.module';
 
 @Controller({
   path: 'home',
   // version: '1',
 })
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    @Inject('Ren') private readonly appService: AppService,
+    @Inject('JD') private shop: String[],
+    @Inject('Ren2') private appService2: AppService2,
+    private readonly userService: UserService,
+  ) {}
 
   @Get('/test01')
   getHello(@Request() req): string {
-
     console.log('我是请求参数', req.query);
     console.log('我是请求session', req.session.cookie);
+    console.log('我是请求session', this.shop,this.appService2.getHello());
+
+    console.log('userService', this.userService.findAll());
+
 
     // return this.appService.getHello();
     return '我是哈哈哈01';
@@ -51,7 +63,7 @@ export class AppController {
 
   @Get(':idpp')
   // @HttpCode(500)
-  findId(@Headers() Head,  @Param() param) {
+  findId(@Headers() Head, @Param() param) {
     // console.log(Head);
     console.log(param); //{ idpp: 'test09' }
     return {
