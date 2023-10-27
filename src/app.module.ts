@@ -1,18 +1,34 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Dependencies, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { AppService2 } from './app.service2';
 import { ConfigModule } from './config/config.module';
 import { LoggerWare } from './config/Logger.ware';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { User } from './user/entities/user.entity';
 
+
+@Dependencies(DataSource)
 @Module({
   imports: [UserModule,ConfigModule.forRoot({
     path: '/ren'
-  })],
+  }),  TypeOrmModule.forRoot({
+    type: 'mysql',
+    host: 'localhost',
+    port: 3306,
+    username: 'root',
+    password: 'rxq123456',
+    database: 'test',
+    retryAttempts: 1,
+    entities: [User],
+    synchronize: true,
+  }),],
   controllers: [AppController],
   providers: [
     {
+
       provide: 'Ren',
       useClass: AppService,
     },
@@ -36,10 +52,23 @@ import { LoggerWare } from './config/Logger.ware';
   ],
 })
 
-export class AppModule implements NestModule{
-  configure (consumer:MiddlewareConsumer) {
-    consumer.apply(LoggerWare).forRoutes('home')
-    //甚至可以直接吧 UserController 塞进去
-    //consumer.apply(LoggerWare).forRoutes(UserController) 
+export class AppModule {
+
+  constructor(dataSource: DataSource) {
+    // this.dataSource = dataSource;
   }
 }
+
+// export class AppModule implements NestModule{
+
+//   constructor(dataSource: DataSource) {
+//     this.dataSource = dataSource;
+//   }
+
+
+//   configure (consumer:MiddlewareConsumer) {
+//     // consumer.apply(LoggerWare).forRoutes('home')
+//     //甚至可以直接吧 UserController 塞进去
+//     //consumer.apply(LoggerWare).forRoutes(UserController) 
+//   }
+// }

@@ -4,6 +4,7 @@ import { VersioningType } from '@nestjs/common';
 import * as session from 'express-session';
 import { ConfigResponse } from './config/config.response';
 import { ConfigHttpFilter } from './config/config.filter';
+import * as cookieParser from 'cookie-parser';
 
 const whiteList = ['/list']
 
@@ -22,19 +23,24 @@ async function bootstrap() {
   app.enableVersioning({
     type: VersioningType.URI,
   });
-  app.use(
-    session({
-      secret: 'Ren',
-      name: 'ren_session',
-      rolling: true,
-      cookie: { maxAge: 1000000 },
-      resave: false,
-      saveUninitialized: true,
-    }),
-  );
-  app.use(middleWareAll);
-  app.useGlobalInterceptors(new ConfigResponse())
-  app.useGlobalFilters(new ConfigHttpFilter())
+  //cookie加密key
+  app.use(cookieParser('0'));
+
+  // app.use(
+  //   session({
+  //     secret: 'Ren',
+  //     name: 'ren_session',
+  //     rolling: true,
+  //     cookie: { maxAge: 1000000 },
+  //     resave: false,
+  //     saveUninitialized: true,
+  //   }),
+  // );
+
+
+  // app.use(middleWareAll);
+  // app.useGlobalInterceptors(new ConfigResponse())
+  // app.useGlobalFilters(new ConfigHttpFilter())
   await app.listen(3000);
 }
 bootstrap();
