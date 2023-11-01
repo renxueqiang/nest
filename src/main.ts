@@ -2,12 +2,14 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { VersioningType } from '@nestjs/common';
 import * as session from 'express-session';
-import { ConfigHttpFilter } from './config/config.filter';
+import { HttpExceptionFilter01 } from './config/config.filter';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfingLogger } from './config/config.logger';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { testMiddleware02 } from './config/config.middleware';
 import { TestInterceptor } from './config/config.interceptor';
+import { TestGuard01 } from './config/config.guard';
+import { TestPipe01 } from './config/config.pipe';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -34,7 +36,15 @@ async function bootstrap() {
 
   //全局拦截器
   app.useGlobalInterceptors(new TestInterceptor)
-  // app.useGlobalFilters(new ConfigHttpFilter())
+
+  //全局守卫
+  app.useGlobalGuards(new TestGuard01());
+
+  //全局守卫过滤器
+  app.useGlobalFilters(new HttpExceptionFilter01())
+
+  //全局管道
+  app.useGlobalPipes(new TestPipe01())
   await app.listen(3000);
 }
 bootstrap();

@@ -1,7 +1,4 @@
 import { Module, DynamicModule, Global } from '@nestjs/common'
- 
- 
- 
 interface Options {
     path: string
 }
