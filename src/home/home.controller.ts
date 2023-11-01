@@ -12,19 +12,61 @@ import {
   Req,
   Res,
   HttpStatus,
-  Injectable
+  Injectable,
+  UseInterceptors
 } from '@nestjs/common';
 import { HomeService } from './home.service';
 import { CreateHomeDto } from './dto/create-home.dto';
 import { UpdateHomeDto } from './dto/update-home.dto';
 import { Request, Response} from 'express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { TestInterceptor02 } from 'src/config/config.interceptor';
 
+@UseInterceptors(TestInterceptor02)  //可以装饰类
+@ApiTags('首页')
+@ApiBearerAuth()
 @Controller('home')
 export class HomeController {
   constructor(private readonly homeService: HomeService) {}
 
+  // @UseInterceptors(TestInterceptor02) //可以装饰函数
   @Get('/test01')
   getHello(@Req() req:Request,@Res({ passthrough: true }) res: Response): string {
+    res.status(HttpStatus.OK);
+    return this.homeService.getHello();
+  }
+  @Get('/test02')
+  getHello02(@Query() query:CreateHomeDto): string {
+    console.log('我是请求参数', query);
+    return '我是哈哈哈02';
+  }
+
+  @Post('/test03')
+  getHello03(@Req() req:Request): string {
+    console.log('我是请求参数', req.body, req.query);
+    console.log('我是请求session', req.headers);
+
+    return '我是哈哈哈03';
+  }
+  @Post('/test04')
+  //@Body('username')
+  getHello04(@Body() body:CreateHomeDto): string {
+    console.log('我是请求参数', body);
+    return '我是哈哈哈04';
+  }
+
+  @Get(':idpp')
+  // @HttpCode(500)
+  findId(@Headers() Head, @Param('idpp') param:String) {
+    console.log(Head);
+    console.log(param); //{ idpp: 'test09' }
+    return {
+      code: 200,
+    };
+  }
+
+
+  testCookies(@Req() req:Request,@Res({ passthrough: true }) res: Response): string {
     console.log('我是请求参数', req.query);
     console.log('我是请求cookie', req.cookies);
     console.log('我是请求sessionID', req.sessionID);
@@ -56,35 +98,6 @@ export class HomeController {
 
 
     return this.homeService.getHello();
-  }
-  @Get('/test02')
-  getHello02(@Query() query:CreateHomeDto): string {
-    console.log('我是请求参数', query);
-    return '我是哈哈哈02';
-  }
-
-  @Post('/test03')
-  getHello03(@Req() req:Request): string {
-    console.log('我是请求参数', req.body, req.query);
-    console.log('我是请求session', req.headers);
-
-    return '我是哈哈哈03';
-  }
-  @Post('/test04')
-  //@Body('username')
-  getHello04(@Body() body:CreateHomeDto): string {
-    console.log('我是请求参数', body);
-    return '我是哈哈哈04';
-  }
-
-  @Get(':idpp')
-  // @HttpCode(500)
-  findId(@Headers() Head, @Param('idpp') param:String) {
-    console.log(Head);
-    console.log(param); //{ idpp: 'test09' }
-    return {
-      code: 200,
-    };
   }
 }
 

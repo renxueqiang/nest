@@ -2,10 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { VersioningType } from '@nestjs/common';
 import * as session from 'express-session';
-import { ConfigResponse } from './config/config.response';
 import { ConfigHttpFilter } from './config/config.filter';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfingLogger } from './config/config.logger';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { testMiddleware02 } from './config/config.middleware';
+import { TestInterceptor } from './config/config.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -14,25 +16,28 @@ async function bootstrap() {
       credentials: true,
     },
     bufferLogs: true,
-    logger: new ConfingLogger(),
+    // logger: new ConfingLogger(),
   });
-  // app.useGlobalInterceptors(new ConfigResponse())
+
+  //配置 Swagger
+  const options = new DocumentBuilder()
+    .setTitle('文档标题')
+    .setDescription('描述一下')
+    .setVersion('1.0')
+    .setBasePath('api')
+    // .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('/docs', app, document);
+  //全局中间件
+  app.use(testMiddleware02);
+
+  //全局拦截器
+  app.useGlobalInterceptors(new TestInterceptor)
   // app.useGlobalFilters(new ConfigHttpFilter())
   await app.listen(3000);
 }
 bootstrap();
-
-
-
-
-
-
-
-
-
-
-
-
 
 /*
 
