@@ -10,10 +10,11 @@ import {
   UseGuards,
   UseInterceptors,
   ClassSerializerInterceptor,
+  Req,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './create-user.dto';
+import { UpdateUserDto } from './update-user.dto';
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 // import { Roles } from '../roles/roles.decorator';
 // import { Role } from '../roles/roles.interface';

@@ -1,19 +1,15 @@
 import { Dependencies, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { UserModule } from './user/user.module';
-import { ConfigModule } from './config/config.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { User } from './user/user.entity';
 import { TradeModule } from './trade/trade.module';
 import { HomeModule } from './home/home.module';
 
 
 @Dependencies(DataSource)
 @Module({
-  imports: [ConfigModule.forRoot({
-    path: '/ren'
-  }),  TypeOrmModule.forRoot({
+  imports: [TypeOrmModule.forRoot({
     type: 'mysql',
     host: 'localhost',
     port: 3306,
@@ -21,7 +17,7 @@ import { HomeModule } from './home/home.module';
     password: 'rxq123456',
     database: 'test',
     retryAttempts: 1,
-    entities: [User],
+    entities: ["dist/**/*.entity{.ts,.js}"],
     synchronize: true,
   }), TradeModule, HomeModule,UserModule],
   controllers: [AppController]

@@ -20,8 +20,6 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { HomeService } from './home.service';
-import { CreateHomeDto } from './dto/create-home.dto';
-import { UpdateHomeDto } from './dto/update-home.dto';
 import { Request, Response } from 'express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { TestInterceptor02 } from 'src/config/config.interceptor';
@@ -58,7 +56,7 @@ export class HomeController {
 
   @UseFilters(HttpExceptionFilter02) //局部异常过滤器 和全局过滤器互斥
   @Get('/test02')
-  getHello02(@Query() query: CreateHomeDto): string {
+  getHello02(@Query() query: any): string {
     throw new HttpException('这是一个400异常', 400);
     console.log('我是请求参数', query);
     return '我是哈哈哈02';
@@ -73,7 +71,7 @@ export class HomeController {
   }
   @Post('/test04')
   //@Body('username')
-  getHello04(@Body() body: CreateHomeDto): string {
+  getHello04(@Body() body: any): string {
     console.log('我是请求参数', body);
     return '我是哈哈哈04';
   }
