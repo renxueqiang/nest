@@ -9,11 +9,12 @@ export class HttpExceptionFilter01 implements ExceptionFilter {
     const request = ctx.getRequest(); // 获取 request 对象
     const status = exception.getStatus(); // 获取异常的状态码
     console.log('我是全局过滤器');
-
+    
     response.status(status).json({
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
+      message: exception.message
     });
   }
 }

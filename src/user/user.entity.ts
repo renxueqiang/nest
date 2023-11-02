@@ -37,16 +37,9 @@ export class User {
   is_admin?: number;
 
   // 手机号
-  @Column('text')
-  mobile: string;
+  @Column('text',{ nullable: true })
+  mobile?: string;
 
-  // 创建时间
-  @CreateDateColumn()
-  createTime: Date;
-
-  // 更新时间
-  @UpdateDateColumn()
-  updateTime: Date;
 
   // 软删除
   @Column({
@@ -59,11 +52,15 @@ export class User {
   version: number;
 
   // 加密盐
-  @Column('text', { select: false })
+  @Column('text', { select: false , nullable: true})
   salt: string;
 
+  // 创建时间
+  @CreateDateColumn()
+  createTime: Date;
 
-  @Column()
+
+  @Column({nullable: true})
   test_name: string;
 
   // @OneToMany(() => Todo, (todo) => todo.author, { cascade: true })
@@ -75,3 +72,4 @@ export class User {
     this.password = await bcrypt.hash(this.password, salt);
   }
 }
+

@@ -12,6 +12,7 @@ import {
   ClassSerializerInterceptor,
   Req,
   Query,
+  UsePipes,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './create-user.dto';
@@ -22,6 +23,7 @@ import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 // import { RolesGuard } from '../auth/guards/roles.guard';
 import { User } from './user.entity';
 import { query } from 'express';
+import { TestPipe02 } from 'src/config/config.pipe';
 
 @ApiTags('用户详情')
 @ApiBearerAuth()
@@ -32,6 +34,7 @@ export class UserController {
   @ApiBody({ type: CreateUserDto ,description: '我要创建用户'})
   @ApiResponse({ type: User ,description: '创建用户成功',})
   @UseInterceptors(ClassSerializerInterceptor)
+  @UsePipes(TestPipe02)  //局部管道
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);

@@ -4,7 +4,7 @@ import { IsAlphanumeric, IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength } 
 export class CreateUserDto {
   @ApiProperty({ description: '用户名',example: '我是名字', required: true})
   @IsAlphanumeric()
-  @MaxLength(14)
+  @MaxLength(5)
   username: string;
 
   @ApiProperty({ description: '密码' ,example: '我是密码', required: true})
@@ -18,5 +18,10 @@ export class CreateUserDto {
 
   @ApiProperty({ required: false, description: '年龄',example: '我是年龄' })
   @IsOptional()
-  age?: number;
+  test_age?: number;
+
+
+  test_age1: number;
+  
+  test_age2: number;
 }
