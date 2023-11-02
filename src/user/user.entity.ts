@@ -11,6 +11,7 @@ import {
   CreateDateColumn,
   VersionColumn,
 } from 'typeorm';
+import * as crypto from 'crypto';
 // import { Todo } from '../../todo/entities/todo.entity';
 
 @Entity()
@@ -52,7 +53,7 @@ export class User {
   version: number;
 
   // 加密盐
-  @Column('text', { select: false , nullable: true})
+  @Column('text', { select: true , nullable: true})
   salt: string;
 
   // 创建时间
@@ -68,8 +69,28 @@ export class User {
 
   @BeforeInsert()
   private async hashPassword() {
-    const salt = await bcrypt.genSalt();
-    this.password = await bcrypt.hash(this.password, salt);
+    this.salt = await bcrypt.genSalt();
+    this.password = await bcrypt.hash(this.password, this.salt);
   }
 }
 
+
+export function makeSalt(): string {
+  return crypto.randomBytes(3).toString('base64');
+}
+
+/**
+ * 使用盐加密明文密码
+ * @param password 密码
+ * @param salt 密码盐
+ */
+export function encryptPassword(password: string, salt: string): string {
+  if (!password || !salt) {
+    return '';
+  }
+  const tempSalt = Buffer.from(salt, 'base64');
+  return (
+    // 10000 代表迭代次数 16代表长度
+    crypto.pbkdf2Sync(password, tempSalt, 10000, 16, 'sha1').toString('base64')
+  );
+}

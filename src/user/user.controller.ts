@@ -24,6 +24,7 @@ import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from './user.entity';
 import { query } from 'express';
 import { TestPipe02 } from 'src/config/config.pipe';
+import { TestGuard02 } from 'src/config/config.guard';
 
 @ApiTags('用户详情')
 @ApiBearerAuth()
@@ -41,10 +42,9 @@ export class UserController {
   }
 
   @ApiResponse({ type: [User] })
-  // @Roles(Role.Admin)
-  // @UseGuards(RolesGuard)
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get()
+  @UseGuards(TestGuard02) //局部守卫
+  @Get('all')
   async findAll() {
     return this.userService.findAll();
   }
@@ -53,6 +53,11 @@ export class UserController {
   @Get('more')
   async findMore(@Query('page') page: number,@Query('pageSize') pageSize: number,) {
     return this.userService.findMore(page,pageSize);
+  }
+
+  @Get('login')
+  async login(@Query('name') name: string,@Query('password') password: string,) {
+    return this.userService.findByUsernameAndPassword(name,password);
   }
 
   @ApiResponse({ type: User })

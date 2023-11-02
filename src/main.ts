@@ -27,7 +27,7 @@ async function bootstrap() {
     .setDescription('描述一下')
     .setVersion('1.0')
     .setBasePath('api')
-    // .addBearerAuth()
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('/docs', app, document);

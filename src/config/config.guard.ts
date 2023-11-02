@@ -1,4 +1,5 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
 
 
@@ -17,12 +18,34 @@ export class TestGuard01 implements CanActivate {
 
 @Injectable()
 export class TestGuard02 implements CanActivate {
-  canActivate(
+  constructor(
+    private jwtService: JwtService
+  ) { }
+  
+  async canActivate(
     context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
-    console.log('我是局部守卫哈哈:', context.getClass().name);
+  ): Promise<boolean> {
+    //获取请求，并校验token
+    const request = context.switchToHttp().getRequest();
+    let headers = request.headers
+    console.log(headers);
+    
+    const token = headers.token
+    if (!token) {
+      throw new UnauthorizedException();
+    }
+    //验证token或解码获取信息
+    const user = await this.jwtService.verifyAsync(token, {
+      secret: '1234', // 密钥
+    }).catch(() => {
+      throw new UnauthorizedException();
+    });
+    console.log('hhahah2:',user);
 
+    let {nickname} = user
+    if (!nickname) {
+      throw new UnauthorizedException();
+    }
     return true;
   }
 }
-
