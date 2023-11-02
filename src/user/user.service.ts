@@ -26,6 +26,10 @@ export class UserService {
     return this.userRepository.find();
   }
 
+  async findMore( page:number = 1, pageSize:number = 10) {
+    return this.userRepository.findAndCount({skip:(page - 1) * pageSize,take:pageSize});
+  }
+
   async findOne(id: number) {
     return this.userRepository.findOneBy({ id });
   }
