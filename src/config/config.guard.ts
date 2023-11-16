@@ -29,7 +29,8 @@ export class TestGuard02 implements CanActivate {
     const request = context.switchToHttp().getRequest();
     let headers = request.headers
     console.log(headers);
-    
+    console.log(headers.authorization);
+
     const token = headers.token
     if (!token) {
       throw new UnauthorizedException();
